@@ -253,3 +253,18 @@ f: X \rightarrow Y
 ```
 
 
+## モジュール
+- ファイル分割をしよう
+```Plaintext
+src/
+├── main.rs      (crate root)
+├── force.rs     (mod force)
+├── particle.rs  (mod particle)
+└── world.rs     (mod world)
+```
+
+- この配置にするだけでは不十分で，ルート（親）である`main.rs`がモジュールの宣言をしなければならない．
+- 可視性の原則
+1. デフォルトPrivate: 親モジュールや兄弟モジュールであっても，他人の内部にはアクセスできない．
+2. `pub`キーワード: これをつけた項目だけが「親」や「外部」に公開される．
+3. 構造体のフィールド: 構造体自体を`pub`にしても，そのフィールドはデフォルトでPrivateである．個別に`pub`が必要．
