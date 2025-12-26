@@ -35,3 +35,42 @@ impl Particle {
         self.position += self.velocity * dt;
     }
 }
+
+// --- Unit Tests ---
+#[cfg(test)]
+mod tests {
+    use super::*; // Particle, Force を使えるようにする
+
+    #[test]
+    fn test_new_particle() {
+        let p = Particle::new(2.0, 10.0);
+        assert_eq!(p.mass, 2.0);
+        assert_eq!(p.position, 10.0);
+        assert_eq!(p.velocity, 0.0);
+    }
+
+    #[test]
+    fn test_gravity_application() {
+        let mut p = Particle::new(1.0, 0.0);
+        let dt = 1.0;
+        
+        // 重力を1秒間適用
+        p.apply(Force::Gravity, dt);
+        
+        // v = v0 + a*dt = 0 + (-9.8)*1 = -9.8
+        // 浮動小数は完全一致しないことがあるため，誤差を許容するか，
+        // あるいは今回のように単純な計算なら一致を期待する
+        assert_eq!(p.velocity, -9.8);
+    }
+
+    #[test]
+    fn test_impulse_application() {
+        let mut p = Particle::new(2.0, 0.0); // mass = 2.0
+        
+        // 撃力 10.0 を加える
+        // dv = F / m = 10.0 / 2.0 = 5.0
+        p.apply(Force::Impulse(10.0), 0.1); // dtは無視されるはず
+        
+        assert_eq!(p.velocity, 5.0);
+    }
+}

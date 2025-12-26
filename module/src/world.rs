@@ -1,10 +1,11 @@
-use crate::particle::Particle
+use crate::particle::Particle;
+use crate::force::Force;
 
 pub struct World {
     particles: Vec<Particle>,
 }
 
-pub impl World {
+impl World {
     pub fn new() -> World {
         World {
             particles: Vec::new(),
@@ -24,12 +25,31 @@ pub impl World {
     }
 
     pub fn remove_fallen(&mut self) {
-        self.particles.retain(|p| p.position >= 0);
+        self.particles.retain(|p| p.position >= 0.0);
     }
 
     pub fn show_status(&self) {
         for(i, p) in self.particles.iter().enumerate() {
             println!("Particle {}: {}", i, p);
         }
+    }
+
+    pub fn len(&self) -> usize {
+        self.particles.len()
+    }
+}
+
+// Unit #[test]
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_remove_fallen() {
+        let mut world = World::new();
+        world.add(Particle::new(1.0, 10.0));
+        world.add(Particle::new(1.0, -5.0));
+        world.remove_fallen();
+        assert_eq!(world.len(), 1);
     }
 }
