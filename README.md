@@ -90,3 +90,28 @@ let s2 = s1; -> s1は無効化(Invalidated!)
 ```
 
 - これを**Moveセマンティクス**と呼ぶ．所有権は渡したら手元に残らない．
+### パフォーマンスの観点から
+- `i32(int)`はstack上のわずか4Byte->コピーするコストが参照(pointer(64bit環境なら8Byte))よりもむしろ安い．
+- `String`はheap上の巨大な配列を指す->コピーのたびに $\mathbb{O}(n)$ の計算量が発生し，プログラムは著しく低速化する．
+
+### 整合性
+- もし`String`を「ポインタだけコピー(Shallow Copy)」 して，もとの変数を有効なままにしたら？
+  - 2つの変数が同じメモリを指す->スコープ終了時に「二重解放(Double Free)」が発生して，メモリ破壊を引き起こす．
+  - Rustは「所有者は一人」というルール(Move)によってこのバグを論理的に排除している．
+
+## 参照(Reference)と借用(Borrowing)
+- Moveは安全だが，使うたびに所有権を失うのは不便だ->「値を一時的に借りる」仕組み，**参照**と**借用**を導入する．
+- `&T`: 不変参照(Immutable Reference)．「見るだけ」の権利．読み取り専用．
+- `&mut T`: 可変参照(Mutable Reference)．「書き換える」権利．
+
+### 借用規則(The Rules of Borrowing)
+- Rustコンパイラ（Borrow Checker）は，データ競合(Data Race)を防ぐため，以下の規則をコンパイル時に強制する．
+1. 任意の数の不変参照`&T`(読者は何人いてもいい)
+2. たった1つの可変参照`&mut T`(書き手は一人だけ)
+```math
+(\any \text{Readers})\rightarrow (\nany \text{Writer})
+(\any \text{Writer})\rightarrow (Unique)
+```
+- 「状態を観測している間(Read)は，状態を変化させてはならない(Write)」->量子力学的な観測問題に似ている．
+
+
