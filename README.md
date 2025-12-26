@@ -207,4 +207,26 @@ match v.get(100) {
 
 - 「ないかもしれない」という事実は，プログラマに`match`によるハンドリングを強制する->`NullPointerException`は構造的に根絶される．
 
+## クロージャ（無名関数）
+- 数学における写像の記法 $f: p\rightarrow (q)$ をプログラムで表現したもの．ラムダ式てきな．
+```Rust
+self.particles.retain( |p| p.position >= 0.0)
+```
 
+- ここで，|p|がクロージャの引数，p.position >= 0.0 がクロージャの本体になる
+- `retain`は，ベクトルの全要素に対して，渡された関数を実行し，結果が`true`のものだけを残しそれ以外のものを削除(Drop)する高階関数．
+
+## タプルを使ったfor文
+```Rust
+for (i, p) in self.particles.iter().enumerate() {
+  println!("Particles {}: {}", i, p);
+}
+```
+
+1. `self.particles`->ベクタ
+2. `.iter()`->要素を一つずつ参照(`&Particle`)として取り出すイテレータを作る．
+stream: `&Particle A`->`&Particle B`->`&Particle C`
+3. `.enumerate()`->イテレータをラップし，現在の「カウント数」を付与した**タプル**を作る．
+- `for (i, p)`: `(i, p)` はパターンマッチ(分配束縛)．右辺から流れてくる`(usize, &Particle)`というタプルを分解し，
+  - `i`に`0`(index)
+  - `p`に`&Particle A`(中身)を代入している．
