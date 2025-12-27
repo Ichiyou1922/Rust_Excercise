@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "basics",
+    "collections",
+    "algorithms",
+]
+resolver = "2"
